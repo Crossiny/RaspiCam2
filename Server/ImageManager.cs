@@ -24,11 +24,8 @@ namespace Server
                 case Global.RequestImage:
                     try
                     {
-                        // TODO: Uncoment GenerateImage().
-                        // GenerateImage();
-
-                        // FIXME: Set existing image path for testing.
-                        SendImage(Stream, $@"./images/image ({new Random().Next(3, 5)}).jpg");
+                        GenerateImage();
+                        SendImage(Stream);
                     }
                     catch (IOException e)
                     {
@@ -46,7 +43,7 @@ namespace Server
             // Creates and starts a process that generates the image form the camera.
             var raspistillProcess = new Process
             {
-                StartInfo = new ProcessStartInfo("raspistill", string.Format("-o \"{0}\"{1}", path, flipString))
+                StartInfo = new ProcessStartInfo("raspistill", string.Format("-o \"{0}\" -t 50 {1}", path, flipString))
             };
             raspistillProcess.Start();
             raspistillProcess.WaitForExit();
