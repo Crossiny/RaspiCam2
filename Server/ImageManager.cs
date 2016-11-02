@@ -43,7 +43,7 @@ namespace Server
             // Creates and starts a process that generates the image form the camera.
             var raspistillProcess = new Process
             {
-                StartInfo = new ProcessStartInfo("raspistill", string.Format("-o \"{0}\" -t 50 {1}", path, flipString))
+                StartInfo = new ProcessStartInfo("raspistill", string.Format("-o \"{0}\"{1} -t 50 -e jpg -q 70 -w 600 -h 600", path, flipString))
             };
             raspistillProcess.Start();
             raspistillProcess.WaitForExit();
