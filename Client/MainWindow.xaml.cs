@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Windows;
 using Server;
+using System.Timers;
+using System.Threading;
+using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace Client
 {
@@ -12,12 +16,23 @@ namespace Client
     public partial class MainWindow : Window
     {
         private ControlManager _controlManager;
-
         private ImageManager _imageManager;
+        private readonly DispatcherTimer _timer = new System.Windows.Threading.DispatcherTimer()
+        {
+            Interval = TimeSpan.FromMilliseconds(300)
+        };
 
+        /// <summary>
+        /// Standard-Konstruktor.
+        /// </summary>
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void _timer_Tick(object sender, EventArgs e)
+        {
+            Image.Source = _imageManager.GetImage();
         }
 
         private void ConnectButton_Click(object sender, RoutedEventArgs e)
@@ -35,6 +50,8 @@ namespace Client
                 MessageBox.Show(ex.Message);
             }
             ConnectedCheckBox.IsChecked = _imageManager.Connected && _controlManager.Connected;
+            _timer.Tick += _timer_Tick;
+            _timer.Start();
         }
 
         private void UpButton_Click(object sender, RoutedEventArgs e)

@@ -42,7 +42,7 @@ namespace Server
                     // Short break to reduce load while nothing important happens.
                     Thread.Sleep(SleepTime);
 
-                    // Ony accepts a new connection if no client is connected
+                    // Only accepts a new connection if no client is connected
                     if (Listener.Pending() && ((Client == null) || !Client.Connected))
                     {
                         Client = Listener.AcceptTcpClient();
