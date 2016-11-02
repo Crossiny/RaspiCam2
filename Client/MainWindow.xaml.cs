@@ -19,7 +19,7 @@ namespace Client
         private ImageManager _imageManager;
         private readonly DispatcherTimer _timer = new System.Windows.Threading.DispatcherTimer()
         {
-            Interval = TimeSpan.FromMilliseconds(300)
+            Interval = TimeSpan.FromMilliseconds(1500)
         };
 
         /// <summary>
