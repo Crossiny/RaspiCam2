@@ -52,7 +52,7 @@ namespace Server
 
                     // Only executes if the client is connected and data is available, otherwise Stream.ReadByte() would block.
                     if ((Client != null) && Client.Connected && Stream.DataAvailable)
-                        ProcessCommand((byte) Stream.ReadByte());
+                        ProcessCommand((byte)Stream.ReadByte());
                 }
 
                 // Stops the listener if thread is about to finish.
@@ -75,9 +75,18 @@ namespace Server
         [DebuggerStepThrough]
         protected virtual void ProcessCommand(byte readByte)
         {
-            if (readByte == Global.Message) ProcessMessage();
-            if (readByte == Global.CheckConnection) ProcessConnectionCheck();
-            if (readByte == Global.CloseConnection) ProcessCloseConnection();
+            switch (readByte)
+            {
+                case Global.Message:
+                    ProcessMessage();
+                    break;
+                case Global.CheckConnection:
+                    ProcessConnectionCheck();
+                    break;
+                case Global.CloseConnection:
+                    ProcessCloseConnection();
+                    break;
+            }
         }
 
         [DebuggerStepThrough]
@@ -102,7 +111,7 @@ namespace Server
             var message = "";
             while (true)
             {
-                var c = (char) Stream.ReadByte();
+                var c = (char)Stream.ReadByte();
                 if (c == Global.EOT) break;
                 message += c;
             }

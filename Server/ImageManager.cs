@@ -19,19 +19,23 @@ namespace Server
         protected override void ProcessCommand(byte readByte)
         {
             base.ProcessCommand(readByte);
-            if (readByte == Global.RequestImage)
-                try
-                {
-                    // TODO: Uncoment GenerateImage().
-                    // GenerateImage();
+            switch (readByte)
+            {
+                case Global.RequestImage:
+                    try
+                    {
+                        // TODO: Uncoment GenerateImage().
+                        // GenerateImage();
 
-                    // FIXME: Set existing image path for testing.
-                    SendImage(Stream, $@"./images/image ({new Random().Next(0, 7)}).jpg");
-                }
-                catch (IOException e)
-                {
-                    Log(e.Message);
-                }
+                        // FIXME: Set existing image path for testing.
+                        SendImage(Stream, $@"./images/image ({new Random().Next(3, 5)}).jpg");
+                    }
+                    catch (IOException e)
+                    {
+                        Log(e.Message);
+                    }
+                    break;
+            }
         }
 
         public void GenerateImage(string path = "./image.jpg", bool hFlip = false, bool vFlip = false)
@@ -52,7 +56,6 @@ namespace Server
         {
             // Gets the bytes from the image.
             var image = new byte[0];
-
             try
             {
                 image = File.ReadAllBytes(path);

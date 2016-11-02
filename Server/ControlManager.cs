@@ -17,10 +17,21 @@ namespace Server
         {
             base.ProcessCommand(readByte);
 
-            if (readByte == Global.MoveUp) MoveUp();
-            if (readByte == Global.MoveDown) MoveDown();
-            if (readByte == Global.MoveLeft) MoveLeft();
-            if (readByte == Global.MoveRight) MoveRight();
+            switch (readByte)
+            {
+                case Global.MoveUp:
+                    MoveUp();
+                    break;
+                case Global.MoveDown:
+                    MoveDown();
+                    break;
+                case Global.MoveLeft:
+                    MoveLeft();
+                    break;
+                case Global.MoveRight:
+                    MoveRight();
+                    break;
+            }
         }
 
         protected void MoveUp()
