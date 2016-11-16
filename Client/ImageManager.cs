@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -12,10 +14,12 @@ namespace Client
         {
         }
 
-        public ImageSource GetImage()
+        [DebuggerStepThrough]
+        public byte[] GetImage()
         {
             Stream.WriteByte(Global.RequestImage);
             Stream.Flush();
+
             byte[] image;
             var byteList = new List<byte>();
 
@@ -38,7 +42,11 @@ namespace Client
                     break;
                 }
             }
+            return image;
+        }
 
+        public ImageSource GetImage(byte[] image)
+        {
             try
             {
                 var bitmapImage = new BitmapImage();

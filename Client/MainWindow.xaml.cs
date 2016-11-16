@@ -1,8 +1,10 @@
 ﻿using System;
+using System.IO;
 using System.Windows;
 using Server;
 using System.Timers;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Media;
 using System.Windows.Threading;
 
@@ -17,9 +19,14 @@ namespace Client
     {
         private ControlManager _controlManager;
         private ImageManager _imageManager;
+        private MemoryStream _memoryStream = new MemoryStream();
         private readonly DispatcherTimer _timer = new System.Windows.Threading.DispatcherTimer()
         {
-            Interval = TimeSpan.FromMilliseconds(1500)
+            Interval = TimeSpan.FromMilliseconds(50)
+        };
+        private readonly DispatcherTimer _frameTimer = new DispatcherTimer()
+        {
+            Interval = TimeSpan.FromMilliseconds(1000)
         };
 
         /// <summary>
@@ -30,9 +37,19 @@ namespace Client
             InitializeComponent();
         }
 
+        private Task t = null;
+        private int framesPerSecond = 0;
         private void _timer_Tick(object sender, EventArgs e)
         {
-            Image.Source = _imageManager.GetImage();
+            if (t == null)
+            {
+                t = new Task(() => File.WriteAllBytes("temp.jpg", _imageManager.GetImage()));
+                t.Start();
+            }
+            if (!t.IsCompleted) return;
+            Image.Source = _imageManager.GetImage(File.ReadAllBytes("temp.jpg"));
+            Console.WriteLine(framesPerSecond++);
+            t = null;
         }
 
         private void ConnectButton_Click(object sender, RoutedEventArgs e)
@@ -52,6 +69,8 @@ namespace Client
             ConnectedCheckBox.IsChecked = _imageManager.Connected && _controlManager.Connected;
             _timer.Tick += _timer_Tick;
             _timer.Start();
+            _frameTimer.Tick += (o, args) => framesPerSecond = 0;
+            _frameTimer.Start();
         }
 
         private void UpButton_Click(object sender, RoutedEventArgs e)
@@ -59,7 +78,7 @@ namespace Client
             if (_controlManager.Connected)
             {
                 _controlManager.Move(Global.MoveUp);
-                Image.Source = _imageManager.GetImage();
+                //Image.Source = _imageManager.GetImage(File.ReadAllBytes("temp.jpg"));
             }
             else ConnectedCheckBox.IsChecked = false;
         }
@@ -69,7 +88,7 @@ namespace Client
             if (_controlManager.Connected)
             {
                 _controlManager.Move(Global.MoveDown);
-                Image.Source = _imageManager.GetImage();
+                //Image.Source = _imageManager.GetImage(File.ReadAllBytes("temp.jpg"));
             }
             else ConnectedCheckBox.IsChecked = false;
         }
@@ -79,7 +98,7 @@ namespace Client
             if (_controlManager.Connected)
             {
                 _controlManager.Move(Global.MoveLeft);
-                Image.Source = _imageManager.GetImage();
+                //Image.Source = _imageManager.GetImage(File.ReadAllBytes("temp.jpg"));
             }
             else ConnectedCheckBox.IsChecked = false;
         }
@@ -89,7 +108,7 @@ namespace Client
             if (_controlManager.Connected)
             {
                 _controlManager.Move(Global.MoveRight);
-                Image.Source = _imageManager.GetImage();
+                //Image.Source = _imageManager.GetImage(File.ReadAllBytes("temp.jpg"));
 
             }
             else ConnectedCheckBox.IsChecked = false;
@@ -99,7 +118,7 @@ namespace Client
         {
             if (_imageManager.Connected)
             {
-                Image.Source = _imageManager.GetImage();
+                //Image.Source = _imageManager.GetImage(File.ReadAllBytes("temp.jpg"));
             }
             else ConnectedCheckBox.IsChecked = false;
         }
