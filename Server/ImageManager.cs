@@ -35,15 +35,23 @@ namespace Server
             }
         }
 
-        public void GenerateImage(string path = "./image.jpg", bool nightvision = false, bool hFlip = false, bool vFlip = false, int width = 600, int height = 600, int timer = 1, int shutter = 100)
+        public void GenerateImage(string path = "./image.jpg", bool nightvision = false, bool hFlip = false, bool vFlip = false, int width = 600, int height = 600, int timer = 1)
         {
+            string paramString = "raspistill ";
+            paramString += $@"-o ""{path}"" ";
+            paramString += $@"-t {timer} ";
+            paramString += $@"-w {width} ";
+            paramString += $@"-h {height} ";
+            paramString += hFlip ? "-hf " : "";
+            paramString += vFlip ? "-vf " : "";
+            paramString += nightvision ? "--exposure nightpreview" : "";
             // Builds parameter to flip the image if needed.
             string flipString = (hFlip ? " -hf" : "") + (vFlip ? " -vf" : "");
             string nightvisionString = nightvision ? "--exposure nightpreview" : "";
             // Creates and starts a process that generates the image form the camera.
             Process raspistillProcess = new Process
             {
-                StartInfo = new ProcessStartInfo("raspistill", string.Format("-o \"{0}\" {1} -t {2} -e jpg -w {3} -h {4} {5} -ss {6}", path, flipString, timer, width, height, nightvisionString, shutter))
+                StartInfo = new ProcessStartInfo(paramString)
             };
             raspistillProcess.Start();
             raspistillProcess.WaitForExit();

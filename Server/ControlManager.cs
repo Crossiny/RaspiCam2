@@ -60,9 +60,9 @@ namespace Server
 
         protected void MoveLeft()
         {
-            K_Links.Write(true);
+            _pinLeft.Write(true);
             Thread.Sleep(400);
-            K_Links.Write(false);
+            _pinLeft.Write(false);
             Log("move left");
         }
 

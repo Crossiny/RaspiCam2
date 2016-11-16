@@ -20,25 +20,28 @@
         </Grid.RowDefinitions>
         
         <TextBlock Text="Hostname:" Grid.Row="0" Grid.Column="0" />
-        <TextBox Name="HostBox" Text="localhost" Grid.Row="1" Grid.Column="0" />
+        <TextBox Name="HostBox" IsReadOnly="True" Text="localhost" Grid.Row="1" Grid.Column="0" />
 
         <TextBlock Text="Port (Image):" Grid.Row="0" Grid.Column="1" />
-        <TextBox Name="ImagePortBox" Text="1337" Grid.Row="1" Grid.Column="1" />
+        <TextBox Name="ImagePortBox" IsReadOnly="True"  Text="1337" Grid.Row="1" Grid.Column="1" />
 
         <TextBlock Text="Port (Control):" Grid.Row="0" Grid.Column="2" />
-        <TextBox Name="ControlPortBox" Text="1338" Grid.Row="1" Grid.Column="2" />
+        <TextBox Name="ControlPortBox" Text="1338" IsReadOnly="True" Grid.Row="1" Grid.Column="2" />
 
         <Button Name="ConnectButton" Content="Connect" Grid.Row="1" Grid.Column="3" Click="ConnectButton_Click" />
 
         <Image Name="Image" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" />
 
         <StackPanel Grid.Row="3" Grid.Column="3" VerticalAlignment="Center">
+            <CheckBox Name="HFlipBox" Content="Flip horizontally" />
+            <CheckBox Name="VFlipBox" Content="Flip vertically" />
+            <CheckBox Name="NightVisionBox" Content="Nightvision" />
             <Button Height="25" Name="RefreshButton" Content="Refresh" Click="RefreshButton_Click" />
             <Button Height="25" Name="UpButton" Content="Up" Click="UpButton_Click" />
             <Button Height="25" Name="DownButton" Content="Down" Click="DownButton_Click" />
             <Button Height="25" Name="LeftButton" Content="Left" Click="LeftButton_Click" />
             <Button Height="25" Name="RightButton" Content="Right" Click="RightButton_Click" />
         </StackPanel>
-        <CheckBox Name="ConnectedCheckBox" Content="Connected" Grid.Row="0" Grid.Column="3" />
+        <CheckBox Name="ConnectedCheckBox" IsEnabled="False" Content="Connected" Grid.Row="0" Grid.Column="3" />
     </Grid>
 </Window>
