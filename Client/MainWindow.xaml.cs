@@ -41,13 +41,18 @@ namespace Client
         private int framesPerSecond = 0;
         private void _timer_Tick(object sender, EventArgs e)
         {
+            // Starts a new task to download the image if no task is running.
             if (t == null)
             {
-                t = new Task(() => File.WriteAllBytes("temp.jpg", _imageManager.GetImage()));
+                t = new Task(() => File.WriteAllBytes("temp.jpg", _imageManager.GetImage(NightVisionBox.IsChecked.Value)));
                 t.Start();
             }
+
+            // Skips if downloadtask isnt completed.
             if (!t.IsCompleted) return;
-            Image.Source = _imageManager.GetImage(File.ReadAllBytes("temp.jpg"));
+
+            // Sets downloaded image as Imagesource.
+            Image.Source = _imageManager.ByteToImageSource(File.ReadAllBytes("temp.jpg"));
             Console.WriteLine(framesPerSecond++);
             t = null;
         }
@@ -61,16 +66,18 @@ namespace Client
 
                 _imageManager = new ImageManager(HostBox.Text, imagePort);
                 _controlManager = new ControlManager(HostBox.Text, controlPort);
+                ConnectedCheckBox.IsChecked = _imageManager.Connected && _controlManager.Connected;
+                // Initiliase download timer.
+                _timer.Tick += _timer_Tick;
+                _timer.Start();
+                // Initialise framerate timer.
+                _frameTimer.Tick += (o, args) => framesPerSecond = 0;
+                _frameTimer.Start();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
-            ConnectedCheckBox.IsChecked = _imageManager.Connected && _controlManager.Connected;
-            _timer.Tick += _timer_Tick;
-            _timer.Start();
-            _frameTimer.Tick += (o, args) => framesPerSecond = 0;
-            _frameTimer.Start();
         }
 
         private void UpButton_Click(object sender, RoutedEventArgs e)
@@ -78,7 +85,6 @@ namespace Client
             if (_controlManager.Connected)
             {
                 _controlManager.Move(Global.MoveUp);
-                //Image.Source = _imageManager.GetImage(File.ReadAllBytes("temp.jpg"));
             }
             else ConnectedCheckBox.IsChecked = false;
         }
@@ -88,7 +94,6 @@ namespace Client
             if (_controlManager.Connected)
             {
                 _controlManager.Move(Global.MoveDown);
-                //Image.Source = _imageManager.GetImage(File.ReadAllBytes("temp.jpg"));
             }
             else ConnectedCheckBox.IsChecked = false;
         }
@@ -98,7 +103,6 @@ namespace Client
             if (_controlManager.Connected)
             {
                 _controlManager.Move(Global.MoveLeft);
-                //Image.Source = _imageManager.GetImage(File.ReadAllBytes("temp.jpg"));
             }
             else ConnectedCheckBox.IsChecked = false;
         }
@@ -108,17 +112,7 @@ namespace Client
             if (_controlManager.Connected)
             {
                 _controlManager.Move(Global.MoveRight);
-                //Image.Source = _imageManager.GetImage(File.ReadAllBytes("temp.jpg"));
 
-            }
-            else ConnectedCheckBox.IsChecked = false;
-        }
-
-        private void RefreshButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (_imageManager.Connected)
-            {
-                //Image.Source = _imageManager.GetImage(File.ReadAllBytes("temp.jpg"));
             }
             else ConnectedCheckBox.IsChecked = false;
         }

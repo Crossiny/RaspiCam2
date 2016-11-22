@@ -15,9 +15,11 @@ namespace Client
         }
 
         [DebuggerStepThrough]
-        public byte[] GetImage()
+        public byte[] GetImage(bool nightVision)
         {
             Stream.WriteByte(Global.RequestImage);
+            byte nvByte = nightVision ? (byte)0x1 : (byte)0x0;
+            Stream.WriteByte(nvByte);
             Stream.Flush();
 
             byte[] image;
@@ -45,7 +47,7 @@ namespace Client
             return image;
         }
 
-        public ImageSource GetImage(byte[] image)
+        public ImageSource ByteToImageSource(byte[] image)
         {
             try
             {
