@@ -24,9 +24,7 @@ namespace Server
                 case Global.RequestImage:
                     try
                     {
-                        // Enable nightvision if second byte is 1.
-                        bool nightvision = Stream.ReadByte() == 1;
-                        GenerateImage(nightvision: nightvision);
+                        GenerateImage();
                         SendImage(Stream);
                     }
                     catch (IOException e)
@@ -39,7 +37,6 @@ namespace Server
 
         public void GenerateImage(string path = "./image.jpg", bool nightvision = false, bool hFlip = false, bool vFlip = false, int width = 600, int height = 600, int timer = 1)
         {
-            // Builds parameter to flip the image.
             string paramString = "raspistill ";
             paramString += $@"-o ""{path}"" ";
             paramString += $@"-t {timer} ";
@@ -48,6 +45,9 @@ namespace Server
             paramString += hFlip ? "-hf " : "";
             paramString += vFlip ? "-vf " : "";
             paramString += nightvision ? "--exposure nightpreview" : "";
+            // Builds parameter to flip the image if needed.
+            string flipString = (hFlip ? " -hf" : "") + (vFlip ? " -vf" : "");
+            string nightvisionString = nightvision ? "--exposure nightpreview" : "";
             // Creates and starts a process that generates the image form the camera.
             Process raspistillProcess = new Process
             {
