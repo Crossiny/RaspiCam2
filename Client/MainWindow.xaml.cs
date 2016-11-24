@@ -1,12 +1,10 @@
 ﻿using System;
 using System.IO;
-using System.Windows;
-using Server;
-using System.Timers;
-using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Media;
+using System.Timers;
+using System.Windows;
 using System.Windows.Threading;
+using Server;
 
 namespace Client
 {
@@ -17,28 +15,49 @@ namespace Client
     /// </summary>
     public partial class MainWindow : Window
     {
-        private ControlManager _controlManager;
-        private ImageManager _imageManager;
-        private MemoryStream _memoryStream = new MemoryStream();
-        private readonly DispatcherTimer _timer = new System.Windows.Threading.DispatcherTimer()
+        private readonly Timer _butonLockTimer = new Timer
+        {
+            Interval = 500,
+            AutoReset = false
+        };
+
+        private readonly DispatcherTimer _timer = new DispatcherTimer
         {
             Interval = TimeSpan.FromMilliseconds(50)
         };
-        private readonly DispatcherTimer _frameTimer = new DispatcherTimer()
-        {
-            Interval = TimeSpan.FromMilliseconds(1000)
-        };
+
+        private ControlManager _controlManager;
+        private ImageManager _imageManager;
+        private MemoryStream _memoryStream = new MemoryStream();
+
+        private Task t;
 
         /// <summary>
-        /// Standard-Konstruktor.
+        ///     Standard-Konstruktor.
         /// </summary>
         public MainWindow()
         {
             InitializeComponent();
+            _butonLockTimer.Elapsed += RegisterButtonEvents;
         }
 
-        private Task t = null;
-        private int framesPerSecond = 0;
+        private void RemoveButtonEvents()
+        {
+            UpButton.Click -= UpButton_Click;
+            DownButton.Click -= DownButton_Click;
+            LeftButton.Click -= LeftButton_Click;
+            RightButton.Click -= RightButton_Click;
+            _butonLockTimer.Start();
+        }
+
+        private void RegisterButtonEvents(object sender, ElapsedEventArgs elapsedEventArgs)
+        {
+            UpButton.Click += UpButton_Click;
+            DownButton.Click += DownButton_Click;
+            LeftButton.Click += LeftButton_Click;
+            RightButton.Click += RightButton_Click;
+        }
+
         private void _timer_Tick(object sender, EventArgs e)
         {
             if (t == null)
@@ -48,7 +67,6 @@ namespace Client
             }
             if (!t.IsCompleted) return;
             Image.Source = _imageManager.GetImage(File.ReadAllBytes("temp.jpg"));
-            Console.WriteLine(framesPerSecond++);
             t = null;
         }
 
@@ -69,57 +87,37 @@ namespace Client
             ConnectedCheckBox.IsChecked = _imageManager.Connected && _controlManager.Connected;
             _timer.Tick += _timer_Tick;
             _timer.Start();
-            _frameTimer.Tick += (o, args) => framesPerSecond = 0;
-            _frameTimer.Start();
         }
 
         private void UpButton_Click(object sender, RoutedEventArgs e)
         {
+            RemoveButtonEvents();
             if (_controlManager.Connected)
-            {
                 _controlManager.Move(Global.MoveUp);
-                //Image.Source = _imageManager.GetImage(File.ReadAllBytes("temp.jpg"));
-            }
             else ConnectedCheckBox.IsChecked = false;
         }
 
         private void DownButton_Click(object sender, RoutedEventArgs e)
         {
+            RemoveButtonEvents();
             if (_controlManager.Connected)
-            {
                 _controlManager.Move(Global.MoveDown);
-                //Image.Source = _imageManager.GetImage(File.ReadAllBytes("temp.jpg"));
-            }
             else ConnectedCheckBox.IsChecked = false;
         }
 
         private void LeftButton_Click(object sender, RoutedEventArgs e)
         {
+            RemoveButtonEvents();
             if (_controlManager.Connected)
-            {
                 _controlManager.Move(Global.MoveLeft);
-                //Image.Source = _imageManager.GetImage(File.ReadAllBytes("temp.jpg"));
-            }
             else ConnectedCheckBox.IsChecked = false;
         }
 
         private void RightButton_Click(object sender, RoutedEventArgs e)
         {
+            RemoveButtonEvents();
             if (_controlManager.Connected)
-            {
                 _controlManager.Move(Global.MoveRight);
-                //Image.Source = _imageManager.GetImage(File.ReadAllBytes("temp.jpg"));
-
-            }
-            else ConnectedCheckBox.IsChecked = false;
-        }
-
-        private void RefreshButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (_imageManager.Connected)
-            {
-                //Image.Source = _imageManager.GetImage(File.ReadAllBytes("temp.jpg"));
-            }
             else ConnectedCheckBox.IsChecked = false;
         }
     }
