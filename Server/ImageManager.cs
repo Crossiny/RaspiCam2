@@ -24,7 +24,7 @@ namespace Server
                 case Global.RequestImage:
                     try
                     {
-                        GenerateImage();
+                        GenerateImage(hFlip: true);
                         SendImage(Stream);
                     }
                     catch (IOException e)
@@ -35,15 +35,21 @@ namespace Server
             }
         }
 
-        public void GenerateImage(string path = "./image.jpg", bool hFlip = false, bool vFlip = false)
+        public void GenerateImage(string path = "./image.jpg", bool nightvision = false, bool hFlip = false, bool vFlip = false, int width = 600, int height = 600, int timer = 1)
         {
             // Builds parameter to flip the image if needed.
-            var flipString = (hFlip ? " -hf" : "") + (vFlip ? " -vf" : "");
-
+            string paramString = "raspistill ";
+            paramString += $@"-o ""{path}"" ";
+            paramString += $@"-t {timer} ";
+            paramString += $@"-w {width} ";
+            paramString += $@"-h {height} ";
+            paramString += hFlip ? "-hf " : "";
+            paramString += vFlip ? "-vf " : "";
+            paramString += nightvision ? "--exposure nightpreview" : "";
             // Creates and starts a process that generates the image form the camera.
-            var raspistillProcess = new Process
+            Process raspistillProcess = new Process
             {
-                StartInfo = new ProcessStartInfo("raspistill", string.Format("-o \"{0}\"{1} -t 50 -e jpg -q 70 -w 600 -h 600", path, flipString))
+                StartInfo = new ProcessStartInfo(paramString)
             };
             raspistillProcess.Start();
             raspistillProcess.WaitForExit();

@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Server.ControlManager">
+    <Position X="6" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABEAAAAAAAAAAAAAAAAIAAQAAAAAAAAIRAAAQAAAAAA=</HashCode>
+      <FileName>ControlManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Server.Global">
+    <Position X="8.5" Y="0.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAEEAAAABAAAAAAAAAAAABAAAAAAAAAIQAAAIAAAAAA=</HashCode>
+      <FileName>Global.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Server.ImageManager">
+    <Position X="4.25" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAgACBAAAQAAAAAA=</HashCode>
+      <FileName>ImageManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Server.Manager">
+    <Position X="2" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAAEACAAAAAQAAAAAAAAAAgMAACIBEAAQACAAAQ=</HashCode>
+      <FileName>Manager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

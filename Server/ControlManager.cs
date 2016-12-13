@@ -1,9 +1,16 @@
 ﻿using System.Net;
+using System.Threading;
+using RaspberryPiDotNet;
 
 namespace Server
 {
     internal class ControlManager : Manager
     {
+        static GPIOMem _pinLeft = new GPIOMem(GPIOPins.Pin_P1_22);
+        static GPIOMem _pinRight = new GPIOMem(GPIOPins.Pin_P1_07);
+        static GPIOMem _pinUp = new GPIOMem(GPIOPins.Pin_P1_18);
+        static GPIOMem _pinDown = new GPIOMem(GPIOPins.Pin_P1_16);
+
         public ControlManager(IPEndPoint ipEndPoint) : base(ipEndPoint)
         {
         }
@@ -36,26 +43,35 @@ namespace Server
 
         protected void MoveUp()
         {
-            // TODO: Implement MoveUp().
-            Log("Moves up");
+            _pinUp.Write(true);
+            Thread.Sleep(100);
+            _pinUp.Write(false);
+            Log("move up");
         }
 
         protected void MoveDown()
         {
             // TODO: Implement MoveDown().
-            Log("Moves down");
+            _pinDown.Write(true);
+            Thread.Sleep(100);
+            _pinDown.Write(false);
+            Log("move down");
         }
 
         protected void MoveLeft()
         {
-            // TODO: Implement MoveLeft().
-            Log("Moves left");
+            _pinLeft.Write(true);
+            Thread.Sleep(400);
+            _pinLeft.Write(false);
+            Log("move left");
         }
 
         protected void MoveRight()
         {
-            // TODO: Implement MoveRight().
-            Log("Moves right");
+            _pinRight.Write(true);
+            Thread.Sleep(400);
+            _pinRight.Write(false);
+            Log("move right");
         }
     }
 }

@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Windows;
-using Server;
+using System.IO;
+using System.Threading.Tasks;
 using System.Timers;
-using System.Threading;
-using System.Windows.Media;
+using System.Windows;
 using System.Windows.Threading;
+using Server;
 
 namespace Client
 {
@@ -15,24 +15,59 @@ namespace Client
     /// </summary>
     public partial class MainWindow : Window
     {
-        private ControlManager _controlManager;
-        private ImageManager _imageManager;
-        private readonly DispatcherTimer _timer = new System.Windows.Threading.DispatcherTimer()
+        private readonly Timer _butonLockTimer = new Timer
         {
-            Interval = TimeSpan.FromMilliseconds(1500)
+            Interval = 500,
+            AutoReset = false
         };
 
+        private readonly DispatcherTimer _timer = new DispatcherTimer
+        {
+            Interval = TimeSpan.FromMilliseconds(50)
+        };
+
+        private ControlManager _controlManager;
+        private ImageManager _imageManager;
+        private MemoryStream _memoryStream = new MemoryStream();
+
+        private Task t;
+
         /// <summary>
-        /// Standard-Konstruktor.
+        ///     Standard-Konstruktor.
         /// </summary>
         public MainWindow()
         {
             InitializeComponent();
+            _butonLockTimer.Elapsed += RegisterButtonEvents;
+        }
+
+        private void RemoveButtonEvents()
+        {
+            UpButton.Click -= UpButton_Click;
+            DownButton.Click -= DownButton_Click;
+            LeftButton.Click -= LeftButton_Click;
+            RightButton.Click -= RightButton_Click;
+            _butonLockTimer.Start();
+        }
+
+        private void RegisterButtonEvents(object sender, ElapsedEventArgs elapsedEventArgs)
+        {
+            UpButton.Click += UpButton_Click;
+            DownButton.Click += DownButton_Click;
+            LeftButton.Click += LeftButton_Click;
+            RightButton.Click += RightButton_Click;
         }
 
         private void _timer_Tick(object sender, EventArgs e)
         {
-            Image.Source = _imageManager.GetImage();
+            if (t == null)
+            {
+                t = new Task(() => File.WriteAllBytes("temp.jpg", _imageManager.GetImage()));
+                t.Start();
+            }
+            if (!t.IsCompleted) return;
+            Image.Source = _imageManager.GetImage(File.ReadAllBytes("temp.jpg"));
+            t = null;
         }
 
         private void ConnectButton_Click(object sender, RoutedEventArgs e)
@@ -56,51 +91,33 @@ namespace Client
 
         private void UpButton_Click(object sender, RoutedEventArgs e)
         {
+            RemoveButtonEvents();
             if (_controlManager.Connected)
-            {
                 _controlManager.Move(Global.MoveUp);
-                Image.Source = _imageManager.GetImage();
-            }
             else ConnectedCheckBox.IsChecked = false;
         }
 
         private void DownButton_Click(object sender, RoutedEventArgs e)
         {
+            RemoveButtonEvents();
             if (_controlManager.Connected)
-            {
                 _controlManager.Move(Global.MoveDown);
-                Image.Source = _imageManager.GetImage();
-            }
             else ConnectedCheckBox.IsChecked = false;
         }
 
         private void LeftButton_Click(object sender, RoutedEventArgs e)
         {
+            RemoveButtonEvents();
             if (_controlManager.Connected)
-            {
                 _controlManager.Move(Global.MoveLeft);
-                Image.Source = _imageManager.GetImage();
-            }
             else ConnectedCheckBox.IsChecked = false;
         }
 
         private void RightButton_Click(object sender, RoutedEventArgs e)
         {
+            RemoveButtonEvents();
             if (_controlManager.Connected)
-            {
                 _controlManager.Move(Global.MoveRight);
-                Image.Source = _imageManager.GetImage();
-
-            }
-            else ConnectedCheckBox.IsChecked = false;
-        }
-
-        private void RefreshButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (_imageManager.Connected)
-            {
-                Image.Source = _imageManager.GetImage();
-            }
             else ConnectedCheckBox.IsChecked = false;
         }
     }
