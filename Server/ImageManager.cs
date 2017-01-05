@@ -16,40 +16,36 @@ namespace Server
             get { return "ImageManager"; }
         }
 
-        protected override void ProcessCommand(byte readByte)
-        {
-            base.ProcessCommand(readByte);
-            switch (readByte)
+            protected override void ProcessCommand(byte readByte)
             {
-                case Global.RequestImage:
-                    try
-                    {
-                        GenerateImage(hFlip: true);
-                        SendImage(Stream);
-                    }
-                    catch (IOException e)
-                    {
-                        Log(e.Message);
-                    }
-                    break;
+                base.ProcessCommand(readByte);
+                switch (readByte)
+                {
+                    case Global.RequestImage:
+                        try
+                        {
+                            GenerateImage(vFlip: true);
+                            SendImage(Stream);
+                        }
+                        catch (IOException e)
+                        {
+                            Log(e.Message);
+                        }
+                        break;
+                }
             }
-        }
 
         public void GenerateImage(string path = "./image.jpg", bool nightvision = false, bool hFlip = false, bool vFlip = false, int width = 600, int height = 600, int timer = 1)
         {
             // Builds parameter to flip the image if needed.
-            string paramString = "raspistill ";
-            paramString += $@"-o ""{path}"" ";
-            paramString += $@"-t {timer} ";
-            paramString += $@"-w {width} ";
-            paramString += $@"-h {height} ";
-            paramString += hFlip ? "-hf " : "";
-            paramString += vFlip ? "-vf " : "";
-            paramString += nightvision ? "--exposure nightpreview" : "";
+            string paramString = " -o " + path + " -t 1 -w 500 -h 500 -q 70 ";
+            paramString += hFlip ? " -hf " : "";
+            paramString += vFlip ? " -vf " : "";
+            Console.WriteLine(paramString);
             // Creates and starts a process that generates the image form the camera.
             Process raspistillProcess = new Process
             {
-                StartInfo = new ProcessStartInfo(paramString)
+                StartInfo = new ProcessStartInfo("raspistill", paramString)
             };
             raspistillProcess.Start();
             raspistillProcess.WaitForExit();
@@ -57,23 +53,15 @@ namespace Server
 
         public void SendImage(Stream stream, string path = "./image.jpg")
         {
-            // Gets the bytes from the image.
-            var image = new byte[0];
-            try
-            {
-                image = File.ReadAllBytes(path);
-            }
-            catch (Exception e)
-            {
-                Log(e.Message);
-            }
-            // Writes the Image to the stream and flushes the stream.
-            Console.WriteLine($"Sending image, {image.Length} Bytes...");
-            stream.Write(image, 0, image.Length);
+            byte[] image = new byte[0];
+            image = File.ReadAllBytes(path);
 
-            // Bytes that indicate the end of the current transmission.
+            Console.WriteLine("Sending image, {1} Bytes...");
+            stream.Write(image, 0, image.Length);
+            
             stream.Write(new byte[] { 0xFA, 0xAF, 0xFA, 0xAF }, 0, 4);
             Console.WriteLine("Image sent.");
+            stream.Flush();
         }
     }
 }

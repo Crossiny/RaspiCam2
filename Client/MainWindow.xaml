@@ -15,12 +15,12 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="16" />
-            <RowDefinition Height="18" />
+            <RowDefinition Height="25" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <TextBlock Text="Hostname:" Grid.Row="0" Grid.Column="0" />
-        <TextBox Name="HostBox" IsReadOnly="False" Text="localhost" Grid.Row="1" Grid.Column="0" />
+        <TextBox Name="HostBox" IsReadOnly="False" Text="169.254.83.24" Grid.Row="1" Grid.Column="0" />
 
         <TextBlock Text="Port (Image):" Grid.Row="0" Grid.Column="1" />
         <TextBox Name="ImagePortBox" IsReadOnly="True" Text="1337" Grid.Row="1" Grid.Column="1" />
@@ -32,11 +32,16 @@
 
         <Image Name="Image" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" />
 
-        <StackPanel Grid.Row="3" Grid.Column="3" VerticalAlignment="Center">
+        <StackPanel Grid.Row="3" Grid.Column="3" VerticalAlignment="Center">            
             <Button Height="25" Name="UpButton" Content="Up" Click="UpButton_Click" />
             <Button Height="25" Name="DownButton" Content="Down" Click="DownButton_Click" />
             <Button Height="25" Name="LeftButton" Content="Left" Click="LeftButton_Click" />
             <Button Height="25" Name="RightButton" Content="Right" Click="RightButton_Click" />
+            <TextBlock Height="25" />            
+            <Button Height="25" Name="ForwardButton" Content="Forward" Click="ForwardButton_Click" />
+            <Button Height="25" Name="BackwardButton" Content="Backward" Click="BackwardButton_Click" />
+            <Button Height="25" Name="TurnLeftButton" Content="Turn Left" Click="TurnLeftButton_Click" />
+            <Button Height="25" Name="TurnRightButton" Content="Turn Right" Click="TurnRightButton_Click" />
         </StackPanel>
         <CheckBox Name="ConnectedCheckBox" IsEnabled="False" Content="Connected" Grid.Row="0" Grid.Column="3" />
     </Grid>

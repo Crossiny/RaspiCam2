@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using System.Timers;
 using System.Windows;
 using System.Windows.Threading;
-using Server;
 
 namespace Client
 {
@@ -47,6 +46,10 @@ namespace Client
             DownButton.Click -= DownButton_Click;
             LeftButton.Click -= LeftButton_Click;
             RightButton.Click -= RightButton_Click;
+            ForwardButton.Click -= ForwardButton_Click;
+            BackwardButton.Click -= BackwardButton_Click;
+            TurnLeftButton.Click -= TurnLeftButton_Click;
+            TurnRightButton.Click -= TurnRightButton_Click;
             _butonLockTimer.Start();
         }
 
@@ -56,6 +59,10 @@ namespace Client
             DownButton.Click += DownButton_Click;
             LeftButton.Click += LeftButton_Click;
             RightButton.Click += RightButton_Click;
+            ForwardButton.Click += ForwardButton_Click;
+            BackwardButton.Click += BackwardButton_Click;
+            TurnLeftButton.Click += TurnLeftButton_Click;
+            TurnRightButton.Click += TurnRightButton_Click;
         }
 
         private void _timer_Tick(object sender, EventArgs e)
@@ -93,7 +100,7 @@ namespace Client
         {
             RemoveButtonEvents();
             if (_controlManager.Connected)
-                _controlManager.Move(Global.MoveUp);
+                _controlManager.MoveCamera(Server.Global.CameraUp);
             else ConnectedCheckBox.IsChecked = false;
         }
 
@@ -101,7 +108,7 @@ namespace Client
         {
             RemoveButtonEvents();
             if (_controlManager.Connected)
-                _controlManager.Move(Global.MoveDown);
+                _controlManager.MoveCamera(Server.Global.CameraDown);
             else ConnectedCheckBox.IsChecked = false;
         }
 
@@ -109,7 +116,7 @@ namespace Client
         {
             RemoveButtonEvents();
             if (_controlManager.Connected)
-                _controlManager.Move(Global.MoveLeft);
+                _controlManager.MoveCamera(Server.Global.CameraLeft);
             else ConnectedCheckBox.IsChecked = false;
         }
 
@@ -117,7 +124,39 @@ namespace Client
         {
             RemoveButtonEvents();
             if (_controlManager.Connected)
-                _controlManager.Move(Global.MoveRight);
+                _controlManager.MoveCamera(Server.Global.CameraRight);
+            else ConnectedCheckBox.IsChecked = false;
+        }
+
+        private void ForwardButton_Click(object sender, RoutedEventArgs e)
+        {
+            RemoveButtonEvents();
+            if (_controlManager.Connected)
+                _controlManager.MoveCamera(Server.Global.Forward);
+            else ConnectedCheckBox.IsChecked = false;
+        }
+
+        private void BackwardButton_Click(object sender, RoutedEventArgs e)
+        {
+            RemoveButtonEvents();
+            if (_controlManager.Connected)
+                _controlManager.MoveCamera(Server.Global.Backward);
+            else ConnectedCheckBox.IsChecked = false;
+        }
+
+        private void TurnLeftButton_Click(object sender, RoutedEventArgs e)
+        {
+            RemoveButtonEvents();
+            if (_controlManager.Connected)
+                _controlManager.MoveCamera(Server.Global.TurnLeft);
+            else ConnectedCheckBox.IsChecked = false;
+        }
+
+        private void TurnRightButton_Click(object sender, RoutedEventArgs e)
+        {
+            RemoveButtonEvents();
+            if (_controlManager.Connected)
+                _controlManager.MoveCamera(Server.Global.TurnRight);
             else ConnectedCheckBox.IsChecked = false;
         }
     }

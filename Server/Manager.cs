@@ -9,12 +9,12 @@ namespace Server
 {
     internal abstract class Manager
     {
-        protected TcpClient Client;
-        protected TcpListener Listener;
         protected bool Running;
         protected int SleepTime = 50;
-        protected NetworkStream Stream;
         protected Task Task;
+        protected TcpClient Client;
+        protected TcpListener Listener;
+        protected NetworkStream Stream;
 
         protected Manager(IPEndPoint ipEndPoint)
         {
@@ -28,7 +28,7 @@ namespace Server
         /// <summary>
         ///     Returns the status of the task executing the connection.
         /// </summary>
-        public TaskStatus Status => Task.Status;
+        public TaskStatus Status { get { return Task.Status; } }
 
         protected void Start()
         {
@@ -37,23 +37,7 @@ namespace Server
             {
                 Listener.Start();
                 Log("Listener started.");
-                while (Running)
-                {
-                    // Short break to reduce load while nothing important happens.
-                    Thread.Sleep(SleepTime);
-
-                    // Only accepts a new connection if no client is connected
-                    if (Listener.Pending() && ((Client == null) || !Client.Connected))
-                    {
-                        Client = Listener.AcceptTcpClient();
-                        Stream = Client.GetStream();
-                        Log("Client Connected.");
-                    }
-
-                    // Only executes if the client is connected and data is available, otherwise Stream.ReadByte() would block.
-                    if ((Client != null) && Client.Connected && Stream.DataAvailable)
-                        ProcessCommand((byte)Stream.ReadByte());
-                }
+                RunLoop();
 
                 // Stops the listener if thread is about to finish.
                 Listener.Stop();
@@ -61,7 +45,27 @@ namespace Server
             });
             Task.Start();
             Log("Task started.");
+        }
 
+        private void RunLoop()
+        {
+            while (Running)
+            {
+                // Short break to reduce load while nothing important happens.
+                Thread.Sleep(SleepTime);
+
+                // Only accepts a new connection if no client is connected
+                if (Listener.Pending() && ((Client == null) || !Client.Connected))
+                {
+                    Client = Listener.AcceptTcpClient();
+                    Stream = Client.GetStream();
+                    Log("Client Connected.");
+                }
+
+                // Only executes if the client is connected and data is available, otherwise Stream.ReadByte() would block.
+                if ((Client != null) && Client.Connected && Stream.DataAvailable)
+                    ProcessCommand((byte) Stream.ReadByte());
+            }
         }
 
         /// <summary>
@@ -93,7 +97,7 @@ namespace Server
         [DebuggerStepThrough]
         protected void Log(string message)
         {
-            Console.WriteLine($"{Identifier} - {message}");
+            Console.WriteLine("{0} - {1}",Identifier,message);
         }
 
         private void ProcessConnectionCheck()
